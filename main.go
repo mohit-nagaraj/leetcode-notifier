@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"os"
 )
 
 // LeetCodeResponse represents the response structure from LeetCode's GraphQL API.
@@ -67,36 +65,30 @@ func fetchDailyProblem() (string, string, error) {
 	return title, link, nil
 }
 
-// Send SMS via TextBelt
-func sendSMS(phoneNumber, message string) error {
-	apiKey := os.Getenv("TEXTBELT_API_KEY")
-	if apiKey == "" {
-		return fmt.Errorf("TEXTBELT_API_KEY environment variable not set")
+// Send message via Telegram Bot
+func sendTelegramMessage(botToken, chatID, message string) error {
+	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", botToken)
+	payload := map[string]string{
+		"chat_id": chatID,
+		"text":    message,
 	}
 
-	values := url.Values{
-		"phone":   {phoneNumber},
-		"message": {message},
-		"key":     {apiKey},
-	}
-
-	resp, err := http.PostForm("https://textbelt.com/text", values)
+	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
-		return fmt.Errorf("error sending SMS: %v", err)
+		return fmt.Errorf("error marshaling payload: %v", err)
+	}
+
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		return fmt.Errorf("error sending Telegram message: %v", err)
 	}
 	defer resp.Body.Close()
 
-	// Ensure response status is OK
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected response from TextBelt: %s", resp.Status)
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("telegram API error: %s", string(body))
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("error reading TextBelt response: %v", err)
-	}
-
-	fmt.Println("TextBelt Response:", string(body))
 	return nil
 }
 
@@ -107,14 +99,12 @@ func main() {
 		return
 	}
 
-	message := fmt.Sprintf("Today's LeetCode Problem: %s\n%s", title, link)
+	message := fmt.Sprintf("Today's LeetCode Problem: %s\n%s\nDear students, please find the daily challenge posted for today ☝️", title, link)
 
-	phoneNumber := os.Getenv("PHONE_NUMBER")
-	if phoneNumber == "" {
-		phoneNumber = "+916363988392" // Default fallback
-	}
+	botToken := "8120973833:AAF0IgNyy3AhLUrwJcZzVABBeERj_NwMpJU"
+	chatID := "-1002526221482"
 
-	if err := sendSMS(phoneNumber, message); err != nil {
+	if err := sendTelegramMessage(botToken, chatID, message); err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
