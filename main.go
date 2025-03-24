@@ -9,6 +9,7 @@ import (
 	"net/url"
 )
 
+// LeetCodeResponse represents the response structure from LeetCode's GraphQL API.
 type LeetCodeResponse struct {
 	Data struct {
 		ActiveDailyCodingChallengeQuestion struct {
