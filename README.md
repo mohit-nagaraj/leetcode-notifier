@@ -13,8 +13,11 @@ Automatically fetch the daily LeetCode problem and get it delivered to your phon
 ## How It Works
 1. The script fetches the daily problem from LeetCode's GraphQL API.
 2. It formats the problem title and link into an SMS.
-3. The SMS is sent to your phone using TextBelt's free SMS service.
+3. The SMS is sent to your phone using TextBelt's free SMS service (https://textbelt.com/)
 4. The entire process is automated and runs daily.
+
+I was able to get the graphql query that fetches this question
+![query image](image.png)
 
 ## Setup
 1. Clone the repository:
