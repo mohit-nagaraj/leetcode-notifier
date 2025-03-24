@@ -5,6 +5,9 @@
 
 Automatically fetch the daily LeetCode problem and get it delivered to your phone via SMS. Perfect for coding enthusiasts and study groups!
 
+## ⚠️ UPDATE: Textbelt has been banned in few countries
+TextBelt Response: {"success":false,"error":"Sorry, free SMS are disabled for this country due to abuse."}
+
 ## Features
 - Fetches the daily LeetCode problem.
 - Sends the problem title and link via SMS using TextBelt.
