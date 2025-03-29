@@ -15,3 +15,18 @@ type TelegramPayload struct {
 	ChatID string `json:"chat_id"`
 	Text   string `json:"text"`
 }
+
+type Problem struct {
+	Title      string  `json:"title"`
+	TitleSlug  string  `json:"titleSlug"`
+	Difficulty string  `json:"difficulty"`
+	AcRate     float64 `json:"acRate"`
+}
+
+type EasyProblemsResponse struct {
+	Data struct {
+		ProblemsetQuestionList struct {
+			Questions []Problem `json:"questions"`
+		} `json:"problemsetQuestionList"`
+	} `json:"data"`
+}
