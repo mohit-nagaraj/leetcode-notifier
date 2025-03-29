@@ -58,20 +58,21 @@ func FetchDailyProblem() (string, string, error) {
 // Fetch problems based on specific criteria and return one problem based on the current date
 func FetchEasyProblemOfTheDay() (string, string, error) {
 	query := `{
-        problemsetQuestionList(
-            categorySlug: ""
+        problemsetQuestionList: questionList(
+            categorySlug: "all-code-essentials"
+            limit: 50
+            skip: 0
             filters: {
-                difficulty: "EASY",
+                difficulty: EASY
                 tags: ["array", "string"]
             }
-            sortOrder: "DESCENDING",
-            sortField: "AC_RATE"
         ) {
-            questions {
+            total: totalNum
+            questions: data {
+                acRate
+                difficulty
                 title
                 titleSlug
-                difficulty
-                acRate
             }
         }
     }`
@@ -86,6 +87,7 @@ func FetchEasyProblemOfTheDay() (string, string, error) {
 
 	resp, err := http.Post("https://leetcode.com/graphql", "application/json", bytes.NewBuffer(requestBody))
 	if err != nil {
+		fmt.Println(resp)
 		return "", "", fmt.Errorf("error making request to LeetCode: %v", err)
 	}
 	defer resp.Body.Close()
