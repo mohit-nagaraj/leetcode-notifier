@@ -1,113 +1,74 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
+	"os"
+
+	"github.com/mohit-nagaraj/leetcode-notifier/types"
+	"github.com/mohit-nagaraj/leetcode-notifier/utils"
 )
 
-// LeetCodeResponse represents the response structure from LeetCode's GraphQL API.
-type LeetCodeResponse struct {
-	Data struct {
-		ActiveDailyCodingChallengeQuestion struct {
-			Link     string `json:"link"`
-			Question struct {
-				Title string `json:"title"`
-			} `json:"question"`
-		} `json:"activeDailyCodingChallengeQuestion"`
-	} `json:"data"`
-}
-
-// Fetch the daily LeetCode problem
-func fetchDailyProblem() (string, string, error) {
-	query := `{
-		activeDailyCodingChallengeQuestion {
-			link
-			question {
-				title
-			}
-		}
-	}`
-
-	requestBody, err := json.Marshal(map[string]string{
-		"query": query,
-	})
-	if err != nil {
-		return "", "", fmt.Errorf("error marshaling JSON: %v", err)
-	}
-
-	resp, err := http.Post("https://leetcode.com/graphql", "application/json", bytes.NewBuffer(requestBody))
-	if err != nil {
-		return "", "", fmt.Errorf("error making request to LeetCode: %v", err)
-	}
-	defer resp.Body.Close()
-
-	// Ensure response status is OK
-	if resp.StatusCode != http.StatusOK {
-		return "", "", fmt.Errorf("unexpected response from LeetCode: %s", resp.Status)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", "", fmt.Errorf("error reading response body: %v", err)
-	}
-
-	var leetCodeResponse LeetCodeResponse
-	if err := json.Unmarshal(body, &leetCodeResponse); err != nil {
-		return "", "", fmt.Errorf("error parsing LeetCode response: %v", err)
-	}
-
-	title := leetCodeResponse.Data.ActiveDailyCodingChallengeQuestion.Question.Title
-	link := "https://leetcode.com" + leetCodeResponse.Data.ActiveDailyCodingChallengeQuestion.Link
-
-	return title, link, nil
-}
-
-// Send message via Telegram Bot
-func sendTelegramMessage(botToken, chatID, message string) error {
+func sendTelegramMessage(botToken, chatID, message, message2 string) error {
 	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", botToken)
-	payload := map[string]string{
-		"chat_id": chatID,
-		"text":    message,
+
+	greet1payload := types.TelegramPayload{
+		ChatID: chatID,
+		Text:   "6th sem problem",
+	}
+	if err := utils.SendMessageWorker(url, greet1payload); err != nil {
+		return err
 	}
 
-	jsonPayload, err := json.Marshal(payload)
-	if err != nil {
-		return fmt.Errorf("error marshaling payload: %v", err)
+	payload := types.TelegramPayload{
+		ChatID: chatID,
+		Text:   message,
+	}
+	if err := utils.SendMessageWorker(url, payload); err != nil {
+		return err
 	}
 
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonPayload))
-	if err != nil {
-		return fmt.Errorf("error sending Telegram message: %v", err)
+	greet2payload := types.TelegramPayload{
+		ChatID: chatID,
+		Text:   "4th sem problem",
 	}
-	defer resp.Body.Close()
+	if err := utils.SendMessageWorker(url, greet2payload); err != nil {
+		return err
+	}
 
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("telegram API error: %s", string(body))
+	payload2 := types.TelegramPayload{
+		ChatID: chatID,
+		Text:   message2,
+	}
+	if err := utils.SendMessageWorker(url, payload2); err != nil {
+		return err
 	}
 
 	return nil
 }
 
 func main() {
-	title, link, err := fetchDailyProblem()
+	title, link, err := utils.FetchDailyProblem()
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
+	botToken := os.Getenv("TELEGRAM_BOT_TOKEN")
+	chatID := os.Getenv("TELEGRAM_CHAT_ID")
+
+	if botToken == "" || chatID == "" {
+		fmt.Println("Error: Telegram credentials not set in environment variables")
+		fmt.Println("Please set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID")
+		return
+	}
+
 	message := fmt.Sprintf("Today's LeetCode Problem: %s\n%s\nDear students, please find the daily challenge posted for today ☝️", title, link)
+	message2 := fmt.Sprintf("Today's LeetCode Problem: %s\n%s\nDear students, please find the daily challenge posted for today ☝️", title, link)
 
-	botToken := "8120973833:AAF0IgNyy3AhLUrwJcZzVABBeERj_NwMpJU"
-	chatID := "-1002526221482"
-
-	if err := sendTelegramMessage(botToken, chatID, message); err != nil {
+	if err := sendTelegramMessage(botToken, chatID, message, message2); err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
-	fmt.Println("SMS sent successfully!")
+	fmt.Println("Telegram notification sent successfully!")
 }
