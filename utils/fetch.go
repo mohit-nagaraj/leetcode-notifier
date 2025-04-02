@@ -65,6 +65,7 @@ func FetchEasyProblemOfTheDay() (string, string, error) {
             filters: {
                 difficulty: EASY
                 tags: ["array", "string"]
+				paidOnly: false
             }
         ) {
             total: totalNum
@@ -73,6 +74,7 @@ func FetchEasyProblemOfTheDay() (string, string, error) {
                 difficulty
                 title
                 titleSlug
+				paidOnly
             }
         }
     }`

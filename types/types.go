@@ -21,6 +21,7 @@ type Problem struct {
 	TitleSlug  string  `json:"titleSlug"`
 	Difficulty string  `json:"difficulty"`
 	AcRate     float64 `json:"acRate"`
+	PaidOnly   bool    `json:"paidOnly"`
 }
 
 type EasyProblemsResponse struct {
