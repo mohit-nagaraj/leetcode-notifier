@@ -55,17 +55,17 @@ func FetchDailyProblem() (string, string, error) {
 	return title, link, nil
 }
 
-// Fetch problems based on specific criteria and return one problem based on the current date
+// Fetch the easy problem of the day from LeetCode
 func FetchEasyProblemOfTheDay() (string, string, error) {
 	query := `{
         problemsetQuestionList: questionList(
             categorySlug: "all-code-essentials"
-            limit: 50
+            limit: 100
             skip: 0
             filters: {
                 difficulty: EASY
                 tags: ["array", "string"]
-				paidOnly: false
+                premiumOnly: false
             }
         ) {
             total: totalNum
@@ -74,7 +74,7 @@ func FetchEasyProblemOfTheDay() (string, string, error) {
                 difficulty
                 title
                 titleSlug
-				paidOnly
+                isPaidOnly
             }
         }
     }`
@@ -89,7 +89,6 @@ func FetchEasyProblemOfTheDay() (string, string, error) {
 
 	resp, err := http.Post("https://leetcode.com/graphql", "application/json", bytes.NewBuffer(requestBody))
 	if err != nil {
-		fmt.Println(resp)
 		return "", "", fmt.Errorf("error making request to LeetCode: %v", err)
 	}
 	defer resp.Body.Close()
@@ -108,21 +107,27 @@ func FetchEasyProblemOfTheDay() (string, string, error) {
 		return "", "", fmt.Errorf("error parsing LeetCode response: %v", err)
 	}
 
-	questions := leetCodeResponse.Data.ProblemsetQuestionList.Questions
-	if len(questions) == 0 {
-		return "", "", fmt.Errorf("no problems found")
+	// Filter out any premium problems that might have slipped through
+	var nonPremiumQuestions []types.Problem
+	for _, question := range leetCodeResponse.Data.ProblemsetQuestionList.Questions {
+		if !question.IsPaidOnly {
+			nonPremiumQuestions = append(nonPremiumQuestions, question)
+		}
 	}
 
+	if len(nonPremiumQuestions) == 0 {
+		return "", "", fmt.Errorf("no non-premium problems found")
+	}
+
+	// Select problem based on current date
 	startDate := time.Date(2025, 3, 29, 0, 0, 0, 0, time.UTC)
 	today := time.Now().UTC()
-
 	daysSinceStart := int(today.Sub(startDate).Hours() / 24)
-
-	index := daysSinceStart % len(questions)
-	selectedProblem := questions[index]
+	index := daysSinceStart % len(nonPremiumQuestions)
+	selectedProblem := nonPremiumQuestions[index]
 
 	title := selectedProblem.Title
 	link := "https://leetcode.com/problems/" + selectedProblem.TitleSlug
-
+	fmt.Printf("Selected problem: %s\n", link)
 	return title, link, nil
 }

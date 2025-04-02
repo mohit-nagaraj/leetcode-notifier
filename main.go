@@ -54,7 +54,7 @@ func main() {
 	}
 	title2, link2, err2 := utils.FetchEasyProblemOfTheDay()
 	if err2 != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("Error2:", err)
 		return
 	}
 
@@ -71,7 +71,7 @@ func main() {
 	message2 := fmt.Sprintf("Today's LeetCode Problem: %s\n%s\nDear students, please find the daily challenge posted for today ☝️", title2, link2)
 
 	if err := sendTelegramMessage(botToken, chatID, message, message2); err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("Error sending msg:", err)
 		return
 	}
 
