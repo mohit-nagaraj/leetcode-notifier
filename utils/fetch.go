@@ -51,7 +51,7 @@ func FetchDailyProblem() (string, string, error) {
 
 	title := leetCodeResponse.Data.ActiveDailyCodingChallengeQuestion.Question.Title
 	// link := "https://leetcode.com" + leetCodeResponse.Data.ActiveDailyCodingChallengeQuestion.Link
-	link := "https://fast-leetcode.vercel.app/" + leetCodeResponse.Data.ActiveDailyCodingChallengeQuestion.Link
+	link := "https://fast-leetcode.vercel.app" + leetCodeResponse.Data.ActiveDailyCodingChallengeQuestion.Link
 	
 	return title, link, nil
 }
