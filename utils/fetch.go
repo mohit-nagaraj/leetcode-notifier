@@ -154,11 +154,13 @@ func FetchRandomCodeChefProblem(csvPath string) (types.CodeChefProblem, error) {
 		return types.CodeChefProblem{}, fmt.Errorf("CSV file is empty or has no data rows")
 	}
 
-	// Skip header row and select a random problem
+	// Skip header row and select problem based on current date
 	dataRows := records[1:]
-	rand.Seed(time.Now().UnixNano())
-	randomIndex := rand.Intn(len(dataRows))
-	selectedRow := dataRows[randomIndex]
+	startDate := time.Date(2025, 11, 5, 0, 0, 0, 0, time.UTC)
+	today := time.Now().UTC()
+	daysSinceStart := int(today.Sub(startDate).Hours() / 24)
+	index := daysSinceStart % len(dataRows)
+	selectedRow := dataRows[index]
 
 	if len(selectedRow) < 4 {
 		return types.CodeChefProblem{}, fmt.Errorf("invalid CSV row format")
