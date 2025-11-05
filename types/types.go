@@ -31,3 +31,10 @@ type EasyProblemsResponse struct {
 		} `json:"problemsetQuestionList"`
 	} `json:"data"`
 }
+
+type CodeChefProblem struct {
+	Name       string
+	Link       string
+	Difficulty string
+	Category   string
+}

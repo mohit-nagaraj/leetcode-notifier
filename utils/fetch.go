@@ -2,10 +2,13 @@ package utils
 
 import (
 	"bytes"
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/mohit-nagaraj/leetcode-notifier/types"
@@ -131,4 +134,42 @@ func FetchEasyProblemOfTheDay() (string, string, error) {
 	link := "https://leetcode.com/problems/" + selectedProblem.TitleSlug
 	fmt.Printf("Selected problem: %s\n", link)
 	return title, link, nil
+}
+
+// Fetch a random CodeChef problem from the CSV file
+func FetchRandomCodeChefProblem(csvPath string) (types.CodeChefProblem, error) {
+	file, err := os.Open(csvPath)
+	if err != nil {
+		return types.CodeChefProblem{}, fmt.Errorf("error opening CSV file: %v", err)
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return types.CodeChefProblem{}, fmt.Errorf("error reading CSV file: %v", err)
+	}
+
+	if len(records) <= 1 {
+		return types.CodeChefProblem{}, fmt.Errorf("CSV file is empty or has no data rows")
+	}
+
+	// Skip header row and select a random problem
+	dataRows := records[1:]
+	rand.Seed(time.Now().UnixNano())
+	randomIndex := rand.Intn(len(dataRows))
+	selectedRow := dataRows[randomIndex]
+
+	if len(selectedRow) < 4 {
+		return types.CodeChefProblem{}, fmt.Errorf("invalid CSV row format")
+	}
+
+	problem := types.CodeChefProblem{
+		Name:       selectedRow[0],
+		Link:       selectedRow[1],
+		Difficulty: selectedRow[2],
+		Category:   selectedRow[3],
+	}
+
+	return problem, nil
 }
