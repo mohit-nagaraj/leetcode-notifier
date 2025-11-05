@@ -58,7 +58,7 @@ func FetchDailyProblem() (string, string, error) {
 	return title, link, nil
 }
 
-// FetchEasyProblemOfTheDay fetches the easy problem of the day from LeetCode
+// FetchEasyProblemOfTheDay fetches Easy/Medium data structure problems from LeetCode for 3rd year students
 func FetchEasyProblemOfTheDay() (string, string, error) {
 	query := `{
         problemsetQuestionList: questionList(
@@ -66,8 +66,7 @@ func FetchEasyProblemOfTheDay() (string, string, error) {
             limit: 100
             skip: 0
             filters: {
-                difficulty: EASY
-                tags: ["array", "string"]
+                tags: ["hash-table", "linked-list", "tree", "stack", "queue", "heap"]
                 premiumOnly: false
             }
         ) {

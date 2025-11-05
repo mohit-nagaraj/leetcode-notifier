@@ -91,7 +91,7 @@ func main() {
 
 	message := fmt.Sprintf("Today's LeetCode Problem: %s\n%s\nDear students, please find the daily challenge posted for today ☝️", title, link)
 	message2 := fmt.Sprintf("Today's LeetCode Problem: %s\n%s\nDear students, please find the daily challenge posted for today ☝️", title2, link2)
-	message3 := fmt.Sprintf("Today's CodeChef Problem: %s\n%s (%s, %s)\nDear students, please find the daily challenge posted for today ☝️", codechefProblem.Name, codechefProblem.Link, codechefProblem.Category, codechefProblem.Difficulty)
+	message3 := fmt.Sprintf("Today's CodeChef Problem: %s\n%s (%s, Difficulty: %s)\nDear students, please find the daily challenge posted for today ☝️", codechefProblem.Name, codechefProblem.Link, codechefProblem.Category, codechefProblem.Difficulty)
 
 	if err := sendTelegramMessage(botToken, chatID, message, message2, message3); err != nil {
 		fmt.Println("Error sending msg:", err)
