@@ -14,7 +14,7 @@ import (
 	"github.com/mohit-nagaraj/leetcode-notifier/types"
 )
 
-// Fetch the daily LeetCode problem
+// FetchDailyProblem fetches the daily LeetCode problem
 func FetchDailyProblem() (string, string, error) {
 	query := `{
 		activeDailyCodingChallengeQuestion {
@@ -59,7 +59,7 @@ func FetchDailyProblem() (string, string, error) {
 	return title, link, nil
 }
 
-// Fetch the easy problem of the day from LeetCode
+// FetchEasyProblemOfTheDay fetches the easy problem of the day from LeetCode
 func FetchEasyProblemOfTheDay() (string, string, error) {
 	query := `{
         problemsetQuestionList: questionList(
@@ -136,7 +136,7 @@ func FetchEasyProblemOfTheDay() (string, string, error) {
 	return title, link, nil
 }
 
-// Fetch a random CodeChef problem from the CSV file
+// FetchRandomCodeChefProblem fetches a random CodeChef problem from the CSV file
 func FetchRandomCodeChefProblem(csvPath string) (types.CodeChefProblem, error) {
 	file, err := os.Open(csvPath)
 	if err != nil {

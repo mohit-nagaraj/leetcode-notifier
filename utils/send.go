@@ -10,6 +10,7 @@ import (
 	"github.com/mohit-nagaraj/leetcode-notifier/types"
 )
 
+// SendMessageWorker sends a message to Telegram via the provided URL and payload
 func SendMessageWorker(url string, payload types.TelegramPayload) error {
 	jsonPayload, err := json.Marshal(payload)
 	if err != nil {

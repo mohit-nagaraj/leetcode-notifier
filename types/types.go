@@ -1,5 +1,6 @@
 package types
 
+// LeetCodeResponse represents the response from LeetCode's GraphQL API for daily problems
 type LeetCodeResponse struct {
 	Data struct {
 		ActiveDailyCodingChallengeQuestion struct {
@@ -11,11 +12,13 @@ type LeetCodeResponse struct {
 	} `json:"data"`
 }
 
+// TelegramPayload represents the payload structure for sending messages via Telegram API
 type TelegramPayload struct {
 	ChatID string `json:"chat_id"`
 	Text   string `json:"text"`
 }
 
+// Problem represents a LeetCode problem with its metadata
 type Problem struct {
 	Title      string  `json:"title"`
 	TitleSlug  string  `json:"titleSlug"`
@@ -24,6 +27,7 @@ type Problem struct {
 	IsPaidOnly bool    `json:"isPaidOnly"`
 }
 
+// EasyProblemsResponse represents the response from LeetCode's GraphQL API for easy problems
 type EasyProblemsResponse struct {
 	Data struct {
 		ProblemsetQuestionList struct {
@@ -32,6 +36,7 @@ type EasyProblemsResponse struct {
 	} `json:"data"`
 }
 
+// CodeChefProblem represents a CodeChef problem with its metadata
 type CodeChefProblem struct {
 	Name       string
 	Link       string
