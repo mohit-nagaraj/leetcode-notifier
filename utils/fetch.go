@@ -66,7 +66,8 @@ func FetchEasyProblemOfTheDay() (string, string, error) {
             limit: 100
             skip: 0
             filters: {
-                tags: ["hash-table", "linked-list", "tree", "stack", "queue", "heap"]
+                difficulty: EASY
+                tags: ["array", "string"]
                 premiumOnly: false
             }
         ) {

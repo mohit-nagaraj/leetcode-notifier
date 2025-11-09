@@ -70,7 +70,7 @@ func main() {
 	}
 	title2, link2, err2 := utils.FetchEasyProblemOfTheDay()
 	if err2 != nil {
-		fmt.Println("Error2:", err)
+		fmt.Println("Error2:", err2)
 		return
 	}
 
